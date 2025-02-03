@@ -1,0 +1,12 @@
+📌 Reglas de Factores de Riesgo Basadas en Variables Categóricas
+✅ Regla 4: Clientes sin pareja y sin dependientes tienen mayor riesgo de abandonar.
+✅ Regla 5: Clientes con contrato mes a mes tienen mucho mayor riesgo de abandono.
+✅ Regla 6: Clientes con fibra óptica tienen más tendencia a cancelar.
+✅ Regla 7: Clientes sin soporte técnico tienen una tasa de abandono muy alta.
+
+📌 Reglas de Factores de Riesgo Basadas en Datos Numéricos
+A partir de estos resultados, podemos definir reglas iniciales de riesgo:
+
+✅ Regla 1: Clientes con menos de 12 meses de tenure tienen alto riesgo de abandono.
+✅ Regla 2: Clientes que pagan más de $70 USD al mes tienen mayor probabilidad de abandonar.
+✅ Regla 3: Clientes con menos de $1000 USD pagados en total pueden ser más propensos a irse.
