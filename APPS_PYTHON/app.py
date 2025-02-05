@@ -5,8 +5,8 @@ import os
 from risk_evaluation import evaluate_risk
 
 
-model_path = os.path.join(os.getcwd(), "..", "Model", "random_forest_churn.pkl")
-columns_path = os.path.join(os.getcwd(), "..", "Model", "train_columns.pkl")
+model_path = os.path.join(os.getcwd(), "random_forest_churn.pkl")
+columns_path = os.path.join(os.getcwd(), "train_columns.pkl")
 
 model = joblib.load(model_path)
 train_columns = joblib.load(columns_path) 
