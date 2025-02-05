@@ -11,25 +11,26 @@ def preprocess_data(df):
     """
     df = df.copy()  # Evitar modificar el original
     
-    # 1️⃣ Eliminar columnas irrelevantes
+    # 1️⃣ Renombrar la variable objetivo antes de la transformación
+    if 'Churn' in df.columns:
+        df.rename(columns={'Churn': 'Churn_Yes'}, inplace=True)
+    
+    # 2️⃣ Guardar la variable objetivo si está presente
+    churn_column = df['Churn_Yes'] if 'Churn_Yes' in df.columns else None
+    
+    # 3️⃣ Eliminar columnas irrelevantes
     if "customerID" in df.columns:
         df.drop(columns=["customerID"], inplace=True)
     
-    # 2️⃣ Convertir variables categóricas en dummies (One-Hot Encoding)
+    # 4️⃣ Convertir variables categóricas en dummies (One-Hot Encoding)
     df = pd.get_dummies(df, drop_first=True)
     
-    # 3️⃣ Asegurar que 'Churn_Yes' no se elimine
-    if 'Churn_Yes' in df.columns:
-        churn_column = df['Churn_Yes']
-    else:
-        churn_column = None
-    
-    # 4️⃣ Escalar las variables numéricas
+    # 5️⃣ Escalar las variables numéricas
     scaler = MinMaxScaler()
     numeric_cols = df.select_dtypes(include=[float, int]).columns  # Seleccionar solo numéricas
     df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
     
-    # 5️⃣ Restaurar la variable objetivo si fue eliminada
+    # 6️⃣ Restaurar la variable objetivo si fue eliminada
     if churn_column is not None:
         df['Churn_Yes'] = churn_column
     

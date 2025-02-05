@@ -1,54 +1,37 @@
 import pandas as pd
 
-def evaluate_numeric_rules(row):
-    """
-    Evalúa las reglas numéricas y asigna puntajes.
-    """
-    score = 0
-    
-    # Regla 1: Tenure < 12 meses → 8.3 pts
-    if row['tenure'] < 12:
-        score += 8.3
-    
-    # Regla 2: MonthlyCharges > 70 USD → 8.3 pts
-    if row['MonthlyCharges'] > 70:
-        score += 8.3
-    
-    # Regla 3: TotalCharges < 1000 USD → 8.3 pts
-    if row['TotalCharges'] < 1000:
-        score += 8.3
-    
-    return score
-
-def evaluate_categorical_rules(row):
-    """
-    Evalúa las reglas categóricas y asigna puntajes.
-    """
-    score = 0
-    
-    # Regla 4: Sin pareja y sin dependientes → 6.25 pts
-    if row['Partner'] == 'No' and row['Dependents'] == 'No':
-        score += 6.25
-    
-    # Regla 5: Contrato mes a mes → 6.25 pts
-    if row['Contract'] == 'Month-to-month':
-        score += 6.25
-    
-    # Regla 6: InternetService = Fiber optic → 6.25 pts
-    if row['InternetService'] == 'Fiber optic':
-        score += 6.25
-    
-    # Regla 7: No tiene soporte técnico → 6.25 pts
-    if row['TechSupport'] == 'No':
-        score += 6.25
-    
-    return score
-
 def evaluate_risk(df):
     """
-    Evalúa el puntaje de riesgo de cada cliente basado en reglas numéricas y categóricas.
+    Evalúa el riesgo de churn de cada cliente aplicando reglas numéricas y categóricas,
+    ajustando la probabilidad del modelo y calculando un score final.
     """
-    df['Numeric_Score'] = df.apply(evaluate_numeric_rules, axis=1)
-    df['Categorical_Score'] = df.apply(evaluate_categorical_rules, axis=1)
-    df['Total_Risk_Score'] = df['Numeric_Score'] + df['Categorical_Score']
+    # Asegurar que los datos no contengan valores nulos
+    df = df.copy()
+    df.fillna("No", inplace=True)
+    
+    # Ajustar Churn_Probability dividiéndolo por 2 y redondeando a 2 decimales hacia arriba
+    df["Churn_Probability_Adjusted"] = df["Churn_Probability"].apply(lambda x: round(x / 2, 2))
+    
+    # Evaluar reglas numéricas y sumar los puntajes totales
+    df["Numeric_Score"] = (
+        (df["tenure"].astype(float) < 12).astype(float) * 0.08 +
+        (df["MonthlyCharges"].astype(float) > 70).astype(float) * 0.08 +
+        (df["TotalCharges"].astype(float) < 1000).astype(float) * 0.08
+    ).round(2)
+    
+    # Evaluar reglas categóricas y sumar los puntajes totales
+    df["Categorical_Score"] = (
+        ((df["Partner"].astype(str).str.strip() == "No") & (df["Dependents"].astype(str).str.strip() == "No")).astype(float) * 0.06 +
+        (df["Contract"].astype(str).str.strip() == "Month-to-month").astype(float) * 0.06 +
+        (df["InternetService"].astype(str).str.strip() == "Fiber optic").astype(float) * 0.06 +
+        (df["TechSupport"].astype(str).str.strip() == "No").astype(float) * 0.06
+    ).round(2)
+    
+    # Calcular el score total redondeado a 2 decimales
+    df["Final_Risk_Score"] = (
+        df["Churn_Probability_Adjusted"] +
+        df["Numeric_Score"] +
+        df["Categorical_Score"]
+    ).round(2)
+    
     return df
