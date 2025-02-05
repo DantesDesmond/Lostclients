@@ -5,9 +5,11 @@ import os
 from risk_evaluation import evaluate_risk
 
 
-model_path = os.path.join(os.getcwd(), "random_forest_churn.pkl")
-columns_path = os.path.join(os.getcwd(), "train_columns.pkl")
+# Ruta al modelo en el mismo directorio que app.py
+model_path = os.path.join(os.path.dirname(__file__), "random_forest_churn.pkl")
+columns_path = os.path.join(os.path.dirname(__file__), "train_columns.pkl")
 
+# Cargar el modelo
 model = joblib.load(model_path)
 train_columns = joblib.load(columns_path) 
 
